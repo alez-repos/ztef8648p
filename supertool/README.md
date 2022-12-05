@@ -4,10 +4,10 @@ A tool to automatize obtaining a root shell and config decryption.
 
 ![demo](demo.gif)
 
-Install:
+Installation:
 
-- I recommend to use Linux for this. It can run on Windows too but you can have some troubles when installing some requirements.
-- Prepare an USB drive NTFS formatted which the following files in the root folder. These files are in the repo in the /bin folder:
+- I recommend to use Linux for this. It can run on Windows too but you may have some troubles when installing some requirements.
+- Prepare an USB drive NTFS formatted with the following files in the root folder. These files are in the repo in the /bin folder:
     - busybox
     - nc 
     - sh (just copy busybox to this name or symlink it)
