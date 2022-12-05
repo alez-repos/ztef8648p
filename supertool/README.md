@@ -15,6 +15,7 @@ Install:
 - Clone or download this repo/folder
 - Install dependencies
     - python3 -m pip install -r requirements.txt
+
 Execution:
 
 - python3 zte-supertool.py
