@@ -1,0 +1,7 @@
+requests
+pycryptodome
+pycryptodomex
+impacket
+colorama
+pwn
+pwntools

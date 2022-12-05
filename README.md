@@ -9,4 +9,5 @@ A few tools for this router
     - hardcodefilesdec.py - for decoding /etc/hardcodefiles/* files
     - tagparamdec.py - for decoding /tagparam/paramtag file
 - /samba - Samba helpers
+- /supertool - Utility to spawn a shell and decrypt config in an almost automatic way
 
