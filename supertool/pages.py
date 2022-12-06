@@ -176,9 +176,12 @@ def macforkey_get(r,host):
     return(x)
 
 def serialforkey_get(r,host):
-    a = r.get("http://{}/?_type=menuView&_tag=statusMgr&Menu3Location=0".format(host))
-    a = r.get("http://{}/?_type=menuData&_tag=devmgr_statusmgr_lua.lua".format(host))
-    x = re.search(r'SerialNumber</ParaName><ParaValue>(.*?)</ParaValue>',a.text).group(1)
+    #a = r.get("http://{}/?_type=menuView&_tag=statusMgr&Menu3Location=0".format(host))
+    #a = r.get("http://{}/?_type=menuData&_tag=devmgr_statusmgr_lua.lua".format(host))
+    #To be removed if new solution is consistent
+    a = r.get("http://{}/?_type=menuView&_tag=ponSn&Menu3Location=0".format(host))
+    a = r.get("http://{}/?_type=menuData&_tag=poninfo_sn_lua.lua".format(host))
+    x = re.search(r'Sn</ParaName><ParaValue>(.*?)</ParaValue>',a.text).group(1)
     return(x)
 
 
