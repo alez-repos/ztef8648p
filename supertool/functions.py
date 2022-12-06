@@ -66,13 +66,28 @@ def getlanip():
     print("[Getlanip]: Acquired local IP {}".format(IP))
     return IP
 
-def prepare_payload(ip):
+def prepare_payload(ip,nousb):
     skel = open("payload.skel","r")
     genpayload = open("payload.sh","w")
     for line in skel:
-        a = line.replace("[PLACEHOLDER]",ip)
+        if nousb == True:
+            a = line.replace("[PLACEHOLDER1]","/mnt")
+        else:
+            a = line.replace("[PLACEHOLDER1]","/mnt/usb1_1_1")
+        a = a.replace("[PLACEHOLDER2]",ip)
         genpayload.write(a)
-    print("[Prepare_payload]: Payload ready")
+    print("[Prepare_payload]: payload.sh ready")
+
+def prepare_testsmb(nousb):
+    skel = open("test.smb.skel","r")
+    genpayload = open("test.smb.conf","w")
+    for line in skel:
+        if nousb == True:
+            a = line.replace("[PLACEHOLDER1]","/mnt")
+        else:
+            a = line.replace("[PLACEHOLDER1]","/mnt/usb1_1_1")
+        genpayload.write(a)
+    print("[Prepare_testsmb]: test.smb.conf ready")
 
 def getshell():
     from pwn import listen

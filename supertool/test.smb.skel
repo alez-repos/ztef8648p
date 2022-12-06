@@ -15,7 +15,7 @@ preserve case = yes
 interfaces = 192.168.0.1/24        
 server signing = True
 [pwn]
-Preexec = /mnt/usb1_1_1/payload.sh
+Preexec = [PLACEHOLDER1]/payload.sh
 comment = samba share dir
 read only = no 
 public = yes
