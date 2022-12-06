@@ -3,7 +3,6 @@ from impacket.smbconnection import SMBConnection
 from time import sleep
 
 def samba_pwn(host,nousb):
-    print("nousb mode = {}".format(nousb))
     print("[Samba_pwn]: Waiting 2 seconds for server startup...")
     sleep(2)
     print("[Samba_pwn]: Connecting")
