@@ -138,7 +138,7 @@ def getgateway():
 
 def detectrouterip(r,host):
     a = getgateway()
-    print("[detect_router]: Checking if default gateway ({}) is an F8648P".format(a))
+    print("[detect_router]: Checking if default gateway ({}) is a ZTE F8648P".format(a))
     z = r.get("http://{}/".format(a))
     if '<span id="pdtVer">&#70;&#56;&#54;&#52;&#56;&#80;</span>' in z.text:
         print("[detect_router]: Positive fingerprint 'F8648P' in {}".format(a))

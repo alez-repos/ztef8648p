@@ -16,6 +16,9 @@ from colorama import Style
 from colorama import init
 import sys
 import os
+import signal
+
+signal.signal(signal.SIGINT, lambda x, y: sys.exit(1))
 
 init()
 
@@ -44,10 +47,10 @@ host = detectrouterip(r,host)
 
 print("What do you want to do? [1=root shell,2=config decript]")
 cmd = 0
-while cmd != 1 and cmd != 2:
-    cmd = int(input())
+while cmd != '1' and cmd != '2':
+    cmd = input()
 
-if cmd == 1:
+if cmd == '1':
     print("What is the user password? [default: {}]".format(password))
     userpass = str(input())
     if userpass != '':
@@ -69,7 +72,7 @@ if cmd == 1:
     getshell()
     
 
-if cmd == 2:
+if cmd == '2':
     print("Note: You need the admin password for this step. If this is your first time using this tool you probably need to do root shell first to change the admin password.")
     print("What is the admin password?")
     adminpass = str(input())
