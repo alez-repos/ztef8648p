@@ -8,6 +8,7 @@ from Crypto.Util.Padding import pad
 import socket
 import subprocess
 from time import sleep
+import struct
 
 def checkheader(form):
     check = str(sha256(form.encode()).hexdigest())
@@ -121,4 +122,32 @@ def nousb_run(host):
     print("[nousb]: Unmounted router smb")
     subprocess.run(['rm','-rf','dest'])
     print("[nousb]: Deleted dest/ mountpoint")
+
+
+
+def getgateway():
+    """Read the default gateway directly from /proc."""
+    with open("/proc/net/route") as fh:
+        for line in fh:
+            fields = line.strip().split()
+            if fields[1] != '00000000' or not int(fields[3], 16) & 2:
+                # If not default route or not RTF_GATEWAY, skip it
+                continue
+
+            return str(socket.inet_ntoa(struct.pack("<L", int(fields[2], 16))))
+
+def detectrouterip(r,host):
+    a = getgateway()
+    print("[detect_router]: Checking if default gateway ({}) is an F8648P".format(a))
+    z = r.get("http://{}/".format(a))
+    if '<span id="pdtVer">&#70;&#56;&#54;&#52;&#56;&#80;</span>' in z.text:
+        print("[detect_router]: Positive fingerprint 'F8648P' in {}".format(a))
+        return(a)
+    else:
+        print("[detect_router]: No match. Falling back to manual router IP input")
+        print("What is the router IP? [default: {}]".format(host))
+        routerip = str(input())
+        if routerip != '':
+            return(routerip)
+
 
