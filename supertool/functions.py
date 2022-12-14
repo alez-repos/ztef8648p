@@ -49,8 +49,9 @@ def encodepass(passwd):
     return(encode,cipherpassb64)
 
 def composekey(mac,serial):
-    serialp = serial.split('cdd')
-    firstpart = "CDD{}".format(serialp[1])
+    p1 = serial[4:7].upper()
+    p2 = serial[7:12]
+    firstpart = "{}{}".format(p1,p2)
     macp = mac.split(':')
     secondpart = "{}{}{}{}{}{}".format(macp[5],macp[4],macp[3],macp[2],macp[1],macp[0])
     print("[Config Key]: {}{}".format(firstpart,secondpart))

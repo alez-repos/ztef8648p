@@ -5,7 +5,7 @@ import requests
 import json
 import base64
 from hashlib import sha256
-from pages import login, lanstatus, samba_get, samba_post, ping_get, ping_post, traceroute_get, traceroute_post, download_get, download_post, macforkey_get,serialforkey_get
+from pages import login, lanstatus, samba_get, samba_post, ping_get, ping_post, traceroute_get, traceroute_post, download_get, download_post, macforkey_get,serialforkey_get, changepass_get, changepass_post
 from functions import encodepass, composekey, getlanip, prepare_payload, prepare_testsmb, getshell, nousb_run, detectrouterip
 from configdecryptor import configdec
 from samba import samba_pwn
