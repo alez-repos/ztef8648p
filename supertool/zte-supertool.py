@@ -55,7 +55,6 @@ if cmd == '1':
     userpass = str(input())
     if userpass != '':
         password = userpass
-    #r = requests.Session()
     login(r,host,user,password)
     post_token = samba_get(r,host)
     if nousb == True:
@@ -76,7 +75,6 @@ if cmd == '2':
     print("Note: You need the admin password for this step. If this is your first time using this tool you probably need to do root shell first to change the admin password.")
     print("What is the admin password?")
     adminpass = str(input())
-    #r = requests.Session()
     login(r,host,"admin",adminpass)
     post_token = download_get(r,host)
     download_post(r,host,post_token)

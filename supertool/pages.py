@@ -26,14 +26,19 @@ def login(r,host,user,password):
         }
     )  
     print("[Login]: {}".format(a.text))
+    if "loginErrMsg" in a.text:
+        errmsg = json.loads(a.text)
+        print("[Login]: Failed ({}{})".format(errmsg['loginErrMsg'],errmsg['promptMsg']))
+        exit(0)
 
 
 # lan status
-def lanstatus(r):
-    a = r.get("http://192.168.0.1/?_type=menuView&_tag=localNetStatus&Menu3Location=0")
-    a = r.get("http://192.168.0.1/?_type=menuData&_tag=status_lan_info_lua.lua")
+def lanstatus(r,host):
+    a = r.get("http://{}/?_type=menuView&_tag=localNetStatus&Menu3Location=0".format(host))
+    a = r.get("http://{}}/?_type=menuData&_tag=status_lan_info_lua.lua".format(host))
     print(a.text)
 
+# samba 
 def samba_get(r,host):
     a = r.get("http://{}/?_type=menuView&_tag=samba&Menu3Location=0".format(host))
     btoken = re.search(r'_sessionTmpToken = "(.*?)";',a.text).group(1)
@@ -74,17 +79,17 @@ def samba_post(r, host, sess_token, status, user, passwd):
     )
     print("[Samba_post]: Setting samba status {} (0=off, 1=on)".format(status))
 
-
-def ping_get(r):
-    a = r.get("http://192.168.0.1/?_type=menuView&_tag=networkDiag&Menu3Location=0")
+# ping
+def ping_get(r, host):
+    a = r.get("http://{}/?_type=menuView&_tag=networkDiag&Menu3Location=0".format(host))
     btoken = re.search(r'_sessionTmpToken = "(.*?)";',a.text).group(1)
     token = bytes.fromhex(btoken.replace('\\x','')).decode()
-    a = r.get("http://192.168.0.1/?_type=menuData&_tag=networkdiag_ping_lua.lua")
+    a = r.get("http://{}/?_type=menuData&_tag=networkdiag_ping_lua.lua".format(host))
     print(a.text)
     print(token)
     return(token)
 
-def ping_post(r,sess_token):
+def ping_post(r,host, sess_token):
     token = sess_token
     post_data = {
         "IF_ACTION":"PingDiagnosis",
@@ -101,7 +106,7 @@ def ping_post(r,sess_token):
     }
     form = urllib.parse.urlencode(post_data)
     checkb64 = checkheader(form)
-    a = r.post("http://192.168.0.1/?_type=menuData&_tag=networkdiag_ping_lua.lua",
+    a = r.post("http://{}/?_type=menuData&_tag=networkdiag_ping_lua.lua".format(host),
         data = post_data,
         headers = {
             "Check":checkb64
@@ -109,16 +114,17 @@ def ping_post(r,sess_token):
     )
     print(a.text)
 
-def changepass_get(r):
-    a = r.get("http://192.168.0.1/?_type=menuView&_tag=accountMgr&Menu3Location=0")
+# password change
+def changepass_get(r, host):
+    a = r.get("http://{}/?_type=menuView&_tag=accountMgr&Menu3Location=0".format(host))
     btoken = re.search(r'_sessionTmpToken = "(.*?)";',a.text).group(1)
     token = bytes.fromhex(btoken.replace('\\x','')).decode()
-    a = r.get("http://192.168.0.1/?_type=menuData&_tag=../../thinklua/usr_mgr/session_mgr.lua")
+    a = r.get("http://{}/?_type=menuData&_tag=../../thinklua/usr_mgr/session_mgr.lua".format(host))
     
     print(a.text)
     return(token)
 
-def changepass_post(r,sess_token):
+def changepass_post(r,host, sess_token):
     token = sess_token
     encode, passb64 = encodepass("user")
     post_data = {
@@ -138,7 +144,7 @@ def changepass_post(r,sess_token):
     form = urllib.parse.urlencode(post_data)
     print(form)
     checkb64 = checkheader(form)
-    a = r.post("http://192.168.0.1/?_type=menuData&_tag=devauth_accountmgr_lua.lua",
+    a = r.post("http://{}/?_type=menuData&_tag=devauth_accountmgr_lua.lua".format(host),
         data = post_data,
         headers = {
             "Check":checkb64
@@ -146,17 +152,18 @@ def changepass_post(r,sess_token):
     )
     print(a.text)
 
-def traceroute_get(r):
-    a = r.get("http://192.168.0.1/?_type=menuView&_tag=networkDiag&Menu3Location=0")
+# traceroute
+def traceroute_get(r, host):
+    a = r.get("http://{}/?_type=menuView&_tag=networkDiag&Menu3Location=0".format(host))
     btoken = re.search(r'_sessionTmpToken = "(.*?)";',a.text).group(1)
     token = bytes.fromhex(btoken.replace('\\x','')).decode()
-    a = r.get("http://192.168.0.1/?_type=menuData&_tag=networkdiag_traceroute_lua.lua")
+    a = r.get("http://{}/?_type=menuData&_tag=networkdiag_traceroute_lua.lua".format(host))
     token = bytes.fromhex(btoken.replace('\\x','')).decode()
     print(a.text)
     print(token)
     return(token)
 
-def traceroute_post(r,sess_token):
+def traceroute_post(r, host, sess_token):
     token = sess_token
     post_data = {
         "IF_ACTION":"TraceRouteDiagnosis",
@@ -174,7 +181,7 @@ def traceroute_post(r,sess_token):
     form = urllib.parse.urlencode(post_data)
     print(form)
     checkb64 = checkheader(form)
-    a = r.post("http://192.168.0.1/?_type=menuData&_tag=networkdiag_traceroute_lua.lua",
+    a = r.post("http://{}/?_type=menuData&_tag=networkdiag_traceroute_lua.lua".format(host),
         data = post_data,
         headers = {
             "Check":checkb64
@@ -182,6 +189,7 @@ def traceroute_post(r,sess_token):
     )
     print(a.text)
 
+# config download
 def download_get(r,host):
     a = r.get("http://{}/?_type=menuView&_tag=usrCfgMgr&Menu3Location=0".format(host))
     btoken = re.search(r'_sessionTmpToken = "(.*?)";',a.text).group(1)
@@ -206,16 +214,15 @@ def download_post(r,host,sess_token):
     f.write(a.content)
     f.close()
 
+# mac address
 def macforkey_get(r,host):
     a = r.get("http://{}/?_type=menuView&_tag=ethWanStatus&Menu3Location=0".format(host))
     a = r.get("http://{}/?_type=menuData&_tag=wan_internetstatus_lua.lua&TypeUplink=2&pageType=1".format(host))
     x = re.search(r'WorkIFMac</ParaName><ParaValue>(.*?)</ParaValue>',a.text).group(1)
     return(x)
 
+# serial number
 def serialforkey_get(r,host):
-    #a = r.get("http://{}/?_type=menuView&_tag=statusMgr&Menu3Location=0".format(host))
-    #a = r.get("http://{}/?_type=menuData&_tag=devmgr_statusmgr_lua.lua".format(host))
-    #To be removed if new solution is consistent
     a = r.get("http://{}/?_type=menuView&_tag=ponSn&Menu3Location=0".format(host))
     a = r.get("http://{}/?_type=menuData&_tag=poninfo_sn_lua.lua".format(host))
     x = re.search(r'Sn</ParaName><ParaValue>(.*?)</ParaValue>',a.text).group(1)

