@@ -41,6 +41,9 @@ def lanstatus(r,host):
 # samba 
 def samba_get(r,host):
     a = r.get("http://{}/?_type=menuView&_tag=samba&Menu3Location=0".format(host))
+    print('***** Debug:')
+    print(a.text)
+    print('************')
     btoken = re.search(r'_sessionTmpToken = "(.*?)";',a.text).group(1)
     token = bytes.fromhex(btoken.replace('\\x','')).decode()
     a = r.get("http://{}/?_type=menuData&_tag=Samba_lua.lua".format(host))
