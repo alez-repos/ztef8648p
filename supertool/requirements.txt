@@ -5,3 +5,4 @@ impacket
 colorama
 pwn
 pwntools
+pstools

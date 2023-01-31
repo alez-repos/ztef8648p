@@ -9,6 +9,8 @@ import socket
 import subprocess
 from time import sleep
 import struct
+import psutil
+
 
 # craft the "check" header
 def checkheader(form):
@@ -157,4 +159,9 @@ def detectrouterip(r,host):
         if routerip != '':
             return(routerip)
 
+def checkopenport():
+    if 3339 in [i.laddr.port for i in psutil.net_connections()]:
+        return True
+    else:
+        return False
 
