@@ -133,31 +133,41 @@ def nousb_run(host):
     subprocess.run(['rm','-rf','dest'])
     print("[nousb]: Deleted dest/ mountpoint")
 
-# obtains default gateway IP
-def getgateway():
-    """Read the default gateway directly from /proc."""
+# obtains all gateways IP
+def getgateways():
+    """Read all gateways directly from /proc."""
+    gw = []
     with open("/proc/net/route") as fh:
         for line in fh:
             fields = line.strip().split()
-            if fields[1] != '00000000' or not int(fields[3], 16) & 2:
+            if fields[1] != '00000000':
                 continue
-
-            return str(socket.inet_ntoa(struct.pack("<L", int(fields[2], 16))))
+            ip = str(socket.inet_ntoa(struct.pack("<L", int(fields[2], 16))))
+            if ip:
+                gw.append(ip)
+        return gw
 
 # fingerprint gateway to check if it is a F8648P 
 def detectrouterip(r,host):
-    a = getgateway()
-    print("[detect_router]: Checking if default gateway ({}) is a ZTE F8648P router".format(a))
-    z = r.get("http://{}/".format(a))
-    if '<span id="pdtVer">&#70;&#56;&#54;&#52;&#56;&#80;</span>' in z.text:
-        print("[detect_router]: It looks like {} is a ZTE F8648P router".format(a))
-        return(a)
-    else:
+    gw = getgateways()
+    for a in gw:
+        print("[detect_router]: Checking if gateway ({}) is a ZTE F8648P router".format(a))
+        try:
+            z = r.get("http://{}/".format(a), timeout=5)
+        except:
+            print("[detect_router]: Timeout waiting for gateway")
+        else:
+            if '<span id="pdtVer">&#70;&#56;&#54;&#52;&#56;&#80;</span>' in z.text:
+                print("[detect_router]: It looks like {} is a ZTE F8648P router".format(a))
+                return(a)
+
         print("[detect_router]: No match. Falling back to manual router IP input")
         print("What is the router IP? [default: {}]".format(host))
         routerip = str(input())
         if routerip != '':
             return(routerip)
+        else:
+            return(host)
 
 def checkopenport():
     if 3339 in [i.laddr.port for i in psutil.net_connections()]:
