@@ -20,6 +20,12 @@ import signal
 
 signal.signal(signal.SIGINT, lambda x, y: sys.exit(1))
 
+print(Fore.YELLOW + "ZTE F8648P supertool by alezz!" + Style.RESET_ALL)
+
+if sys.version_info < (3, 9):
+    print(Fore.RED + "Python version is too old: " + str(sys.version_info) + Style.RESET_ALL)
+    sys.exit()
+
 init()
 
 user = "user"
@@ -32,8 +38,6 @@ try:
         nousb = True
 except:
     pass
-
-print(Fore.YELLOW + "ZTE F8648P supertool by alezz!" + Style.RESET_ALL)
 
 if nousb == True:
     print("[nousb]: Running in nousb mode")

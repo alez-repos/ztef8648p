@@ -102,12 +102,14 @@ def prepare_testsmb(nousb):
 def getshell():
     from pwn import listen
     l = listen(3339)
-    line = l.recvline()
+    conn = l.wait_for_connection()
+    line = conn.recvline()
     if line == b'\n':
         pass
     else:
         print(line)
-    l.interactive()
+    conn.interactive()
+    conn.close()
 
 # nousb commands
 def nousb_run(host):
