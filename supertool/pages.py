@@ -35,7 +35,7 @@ def login(r,host,user,password):
 # lan status
 def lanstatus(r,host):
     a = r.get("http://{}/?_type=menuView&_tag=localNetStatus&Menu3Location=0".format(host))
-    a = r.get("http://{}}/?_type=menuData&_tag=status_lan_info_lua.lua".format(host))
+    a = r.get("http://{}/?_type=menuData&_tag=status_lan_info_lua.lua".format(host))
     print(a.text)
 
 # samba 

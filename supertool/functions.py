@@ -63,16 +63,17 @@ def composekey(mac,serial):
 
 # obtains lan IP
 def getlanip():
+    IP = None
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     s.settimeout(0)
     try:
         s.connect(('10.254.254.254', 1))
         IP = s.getsockname()[0]
+        print("[Getlanip]: Acquired local IP {}".format(IP))
     except Exception:
         print("[Getlanip]: Unable to retrieve local address")
     finally:
         s.close()
-    print("[Getlanip]: Acquired local IP {}".format(IP))
     return IP
 
 # craft payload.sh

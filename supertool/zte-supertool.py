@@ -43,7 +43,7 @@ except:
 
 if nousb == True:
     print("[nousb]: Running in nousb mode")
-    if os.getuid != 0 and os.geteuid() != 0:
+    if os.getuid() != 0 and os.geteuid() != 0:
         print("[nousb]: You need to be root for this mode to work! Stopping")
         exit(0)     
     
